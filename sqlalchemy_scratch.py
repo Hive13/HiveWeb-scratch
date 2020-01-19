@@ -10,7 +10,7 @@
 import sqlalchemy
 import urllib.parse
 
-from creds import password
+from creds import db_password
 
 # dialect+driver://username:password@host:port/database
 user = "access"
@@ -20,7 +20,7 @@ driver = "pg8000"
 url = "postgresql+{}://{}:{}@{}/{}".format(
     driver,
     user,
-    urllib.parse.quote_plus(password),
+    urllib.parse.quote_plus(db_password),
     host,
     db,
 )
