@@ -8,9 +8,9 @@ This README will also serve (for now) as the main page for documentation.
 
 ### Thoughts and Ideas
 
-Let's also have a place for thoughts and ideas, eh? 
+###### Let's also have a place for thoughts and ideas, eh? 
 
---- 
+
 
 * we should define what a bug report looks like
 * we should define what a decent contribution looks like
