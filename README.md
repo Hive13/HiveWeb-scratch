@@ -16,6 +16,7 @@ This README will also serve (for now) as the main page for documentation.
 * should we assign 1 or 2 people to review PRs before merging? Recurring meeting time instead?
 * What HTTP framework/server for the backend? Flask? (And what about for HTTPS/SSL for both device access and frontend access?)
 * What do we want on the frontend? Django?
+* Consider some sort of multi-master Postgres database replication (one on prem for IoT devices, one in Azure for redundancy and speed)
 * We might focus some bootstrapping along these lines (even if the design still
   has to change):
   - Enough of functioning DB layer & API in order to handle access
@@ -50,3 +51,9 @@ This README will also serve (for now) as the main page for documentation.
 * See also:
   - https://wiki.hive13.org/view/RFID_Access
   - https://wiki.hive13.org/view/RFID_Card (needs updates)
+
+###### Design Characteristics
+
+* Existing database must remain in place.
+* Complete separation of API and any user-facing frontend
+* For interoperability and extensibility, the API will be implemented as a RESTful web service
