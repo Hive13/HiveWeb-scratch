@@ -25,6 +25,7 @@ def index():
         # Convert to HTML
         return markdown.markdown(content)
 
+# /test route returns a json object with message success and some_variable
 class test(Resource):
     def get(self):
         some_variable = 'Hive13 Rocks!!'
