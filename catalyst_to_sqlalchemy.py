@@ -11,9 +11,14 @@ code with Table and Column definitions for SQLAlchemy.
 
 It depends on PyYAML for parsing.
 
-This is still incomplete as it does not yet have a proper mapping for
-some SQLAlchemy data types, like citext.
+Generated code depends on 'sqlalchemy' and 'sqlalchemy-citext'
+packages.
+
 """
+
+# https://www.postgresql.org/docs/9.1/citext.html
+# Perhaps just use below?
+# https://github.com/mahmoudimus/sqlalchemy-citext
 
 import json
 import time
@@ -37,6 +42,7 @@ datatypes = {
     "inet":                     "sqlalchemy.dialects.postgresql.INET",
     "bytea":                    "sqlalchemy.dialects.postgresql.BYTEA",
     "jsonb":                    "sqlalchemy.dialects.postgresql.JSONB",
+    "citext":                   "citext.CIText",
 }
 
 # Just here for debugging at the moment...
@@ -56,9 +62,9 @@ def field2column(fieldname, field):
     if field["is_primary_key"]:
         options.append("primary_key=True")
     if not field["is_nullable"]:
-        options.append("is_nullable=False")
+        options.append("nullable=False")
     if field["is_unique"]:
-        options.append("is_unique=True")
+        options.append("unique=True")
     if options:
         options = [""] + options
     opt_str = ", ".join(options)
@@ -92,6 +98,7 @@ def yaml2python(fname):
     yield("#" * 70)
     yield("import sqlalchemy")
     yield("import sqlalchemy.dialects.postgresql")
+    yield("import citext")
     yield("")
     for tablename, table in y["schema"]["tables"].items():
         yield("{} = sqlalchemy.Table('{}', metadata,".format(tablename, tablename))
