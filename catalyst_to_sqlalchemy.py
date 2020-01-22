@@ -100,6 +100,8 @@ def yaml2python(fname):
     yield("import sqlalchemy.dialects.postgresql")
     yield("import citext")
     yield("")
+    yield("metadata = sqlalchemy.MetaData()")
+    yield("")
     for tablename, table in y["schema"]["tables"].items():
         yield("{} = sqlalchemy.Table('{}', metadata,".format(tablename, tablename))
         for fieldname, field in table["fields"].items():

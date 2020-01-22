@@ -1,11 +1,13 @@
 ######################################################################
 # Input filename: /Users/hodapp/Development/HiveWeb/dbicdh/_source/deploy/15/001-auto.yml
-# Generated on Tue Jan 21 19:07:20 2020 by ./catalyst_to_sqlalchemy.py
+# Generated on Tue Jan 21 19:31:26 2020 by ./catalyst_to_sqlalchemy.py
 # Begin automatically generated code:
 ######################################################################
 import sqlalchemy
 import sqlalchemy.dialects.postgresql
 import citext
+
+metadata = sqlalchemy.MetaData()
 
 access_log = sqlalchemy.Table('access_log', metadata,
     sqlalchemy.Column('access_id', sqlalchemy.dialects.postgresql.UUID, primary_key=True, nullable=False),
