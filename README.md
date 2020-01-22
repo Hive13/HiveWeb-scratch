@@ -36,7 +36,9 @@ This README will also serve (for now) as the main page for documentation.
 - [ ] Bootstrap new API (includes folder structure, framework adoption)
 - [ ] Backend unit testing
 - [ ] Model layer in Python & SQLAlchemy
-  - [ ] Convert schema to SQLAlchemy (partially done)
+  - [X] Convert schema to SQLAlchemy
+  - [ ] Organize SQLAlchemy parts (where do creds go? where do I
+        initialize connections?)
   - [ ] Start implementing actual queries of interest
   - [ ] Convert relevant business logic (API may need to be further along for this)
 
@@ -44,7 +46,10 @@ This README will also serve (for now) as the main page for documentation.
 
 ### Documentation
 
-* something will go here soon, I promise. 
+* Start at [sqlalchemy_scratch.py](./sqlalchemy_scratch.py) for an
+  example of accessing the database with SQLAlchemy.  The schema
+  itself was auto-generated in [db.py](./db.py) from
+  [catalyst_to_sqlalchemy.py](./catalyst_to_sqlalchemy.py).
 * Some docs belong on the Wiki too. Let's try to: update or remove
   outdated Wiki packages, put links on relevant Wiki pages to things
   that are documented in the GitHub, and vice versa.
