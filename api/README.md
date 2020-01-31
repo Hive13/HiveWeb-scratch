@@ -3,7 +3,6 @@
 ### Dependencies
 - markdown:             v3.1.1
 - Flask:                v1.1.1
-- flask-rest:            v0.3.7
 - sqlalchemy            v1.3.13
 - sqlalchemy-citext:    v1.3.post0
 - pg8000:               v1.13.2

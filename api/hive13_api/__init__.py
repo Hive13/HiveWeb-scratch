@@ -3,20 +3,21 @@ import markdown
 import os
 import urllib.parse
 import sqlalchemy
+import json
+import random
+import hashlib
+import requests
+
 import db
 
-from creds import db_password
+from creds import db_password, DEVICE, DEVICE_KEY
 
 
 # import framework(s)
 from flask import Flask, g, jsonify
-from flask_restful import Resource, Api, reqparse
 
 # create flask instance
 app = Flask(__name__)
-
-# create api
-api = Api(app)
 
 user = "access"
 host = "honeycomb.at.hive13.org"
@@ -33,12 +34,27 @@ url = "postgresql+{}://{}:{}@{}/{}".format(
     dbname,
 )
 
+postURL = "http://intweb.at.hive13.org/api/access"
+
 print("Using URL: {}".format(url))
 engine = sqlalchemy.create_engine(url, echo=True)
 
-# Bind to engine & connect:
+# Bind to engine & connect (comment out for dev outisde of hive):
 db.metadata.bind = engine
 conn = engine.connect()
+
+def get_random_response(size=16):
+    return [random.randint(0, 255) for _ in range(size)]
+
+def get_checksum(key, data):
+    s = json.dumps(data, sort_keys=True, separators=(",", ":")).encode()
+    print(s)
+    m = hashlib.sha512()
+    m.update(key)
+    m.update(s)
+    return m.hexdigest().upper()
+
+### ------- Begin Routing ------- ###
 
 @app.route("/")
 def index():
@@ -54,23 +70,37 @@ def index():
         return markdown.markdown(content)
 
 # /test route returns a json object with message success and some_variable
-class Test(Resource):
-    def get(self):
-        some_variable = 'Hive13 Rocks!!'
-        
-        # test route to show how other routes can be implemented
-        return {'message': 'Success', 'data': some_variable}
+@app.route("/api/test", methods=["GET"])
+def test():
+    return {'message': 'Sucess', 'data': 'This is how this works'}
 
-class Members(Resource):
-    def get (self):
-        # build query, execute on get request
-        s = sqlalchemy.sql.\
-            select([db.members]).\
-            limit(10).\
-            order_by(db.members.c.created_at.desc())
-        result = conn.execute(s)
-        rows = [{"member": row['member_id']} for row in result]
-        return jsonify(rows)
+@app.route('/api/members', methods=["GET"])
+def members():
+    # build query, execute on get request
+    s = sqlalchemy.sql.\
+        select([db.members]).\
+        limit(10).\
+        order_by(db.members.c.created_at.desc())
+    result = conn.execute(s)
+    rows = [{"member": row['member_id']} for row in result]
+    return jsonify(rows)
 
-api.add_resource(Test, '/test')
-api.add_resource(Members, '/members')
+@app.route('/api/access/door', methods=["POST"])
+def member_door_access():
+    msg = {
+        "data": {
+            "operation": "get_nonce",
+            "version": 2,
+            "random_response": get_random_response(),
+        },
+        "device": DEVICE,
+    }
+
+    cs = get_checksum(DEVICE_KEY, msg["data"])
+    msg["checksum"] = cs
+
+    print("Posting: {}".format(msg))
+    res = requests.post(postURL, json = msg)
+    print(res)
+    print(res.json())
+    return res.json();
