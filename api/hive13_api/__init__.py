@@ -103,4 +103,12 @@ def member_door_access():
     res = requests.post(postURL, json = msg)
     print(res)
     print(res.json())
-    return res.json();
+    return res.json()
+
+@app.route('/api/access/vend/<incoming_badge_number>', methods=["POST"])
+def vend(incoming_badge_number):
+    # SELECT M.vend_credits, M.vend_total FROM (SELECT member_id FROM badge
+    # WHERE , incoming_badge_number = badge_number) Q
+    # RIGHT JOIN members M
+    # ON Q.member_id = M.member_id
+    pass       
