@@ -43,6 +43,7 @@ engine = sqlalchemy.create_engine(url, echo=True)
 db.metadata.bind = engine
 conn = engine.connect()
 
+# for access code
 def get_random_response(size=16):
     return [random.randint(0, 255) for _ in range(size)]
 
@@ -54,8 +55,11 @@ def get_checksum(key, data):
     m.update(s)
     return m.hexdigest().upper()
 
+
 ### ------- Begin Routing ------- ###
 
+# index -- currently turns the README in this folder to HTML.
+# can be removed easily
 @app.route("/")
 def index():
     """Present readme as documentation on index route"""
@@ -74,6 +78,7 @@ def index():
 def test():
     return {'message': 'Sucess', 'data': 'This is how this works'}
 
+# currently get's all members and sorts by most recent members :) 
 @app.route('/api/members', methods=["GET"])
 def members():
     # build query, execute on get request
@@ -84,6 +89,7 @@ def members():
     rows = [{"member": row['member_id'], "member name": row['lname']} for row in result]
     return jsonify(rows)
 
+# door access
 @app.route('/api/access/door', methods=["POST"])
 def member_door_access():
     msg = {
@@ -104,6 +110,7 @@ def member_door_access():
     print(res.json())
     return res.json()
 
+# vend route
 @app.route('/api/access/vend/<incoming_badge_number>', methods=["GET"])
 def vend(incoming_badge_number):
     s = sqlalchemy.text("""SELECT b.badge_number, m.vend_credits
