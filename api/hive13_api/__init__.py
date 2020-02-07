@@ -79,10 +79,9 @@ def members():
     # build query, execute on get request
     s = sqlalchemy.sql.\
         select([db.members]).\
-        limit(10).\
-        order_by(db.members.c.created_at.desc())
+        order_by(db.members.c.created_at.asc())
     result = conn.execute(s)
-    rows = [{"member": row['member_id']} for row in result]
+    rows = [{"member": row['member_id'], "member name": row['lname']} for row in result]
     return jsonify(rows)
 
 @app.route('/api/access/door', methods=["POST"])
@@ -105,10 +104,16 @@ def member_door_access():
     print(res.json())
     return res.json()
 
-@app.route('/api/access/vend/<incoming_badge_number>', methods=["POST"])
+@app.route('/api/access/vend/<incoming_badge_number>', methods=["GET"])
 def vend(incoming_badge_number):
-    # SELECT M.vend_credits, M.vend_total FROM (SELECT member_id FROM badge
-    # WHERE , incoming_badge_number = badge_number) Q
-    # RIGHT JOIN members M
-    # ON Q.member_id = M.member_id
-    pass       
+    s = sqlalchemy.text("""SELECT b.badge_number, m.vend_credits
+                            FROM badge AS b
+                            INNER JOIN members AS m ON m.member_id = b.member_id
+                            WHERE b.badge_number = :x""")
+    result = conn.execute(s, x=incoming_badge_number)
+    rows = [{"vend_credits": row['vend_credits']} for row in result]
+    return jsonify(rows)  
+
+@app.route('/api/access/tool/', methods=["GET"])
+def tool_access():
+    pass
