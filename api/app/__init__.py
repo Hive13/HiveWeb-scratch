@@ -7,4 +7,8 @@ import requests
 app = Flask(__name__)
 
 # import endpoint packages
-from app import *
+from app import test
+from app import tool
+from app import index
+from app import members
+from app import vend
