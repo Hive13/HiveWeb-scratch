@@ -1,0 +1,653 @@
+Table "curse" {
+  "curse_id" uuid [pk, not null]
+  "priority" integer [not null, default: 10000]
+  "protect_group_cast" boolean [not null, default: true]
+  "protect_user_cast" boolean [not null, default: true]
+  "name" "character varying" [not null]
+  "display_name" "character varying" [not null]
+  "notification_markdown" text
+}
+
+Table "device" {
+  "device_id" uuid [pk, not null]
+  "key" bytea [not null]
+  "name" "character varying(64)" [not null]
+  "nonce" bytea
+  "min_version" integer [not null, default: 1]
+  "max_version" integer [not null, default: 1]
+}
+
+Table "item" {
+  "item_id" uuid [pk, not null]
+  "name" character(32) [not null]
+  "display_name" "character varying" [not null]
+  "scale" integer [not null, default: `-1`]
+  "unit" "character varying" [not null, default: "F"]
+}
+
+Table "lamp_color" {
+  "color_id" uuid [pk, not null]
+  "name" "character varying" [not null]
+  "html_color" character(6) [not null]
+}
+
+Table "lamp_preset" {
+  "preset_id" uuid [pk, not null]
+  "name" "character varying" [not null]
+}
+
+Table "log" {
+  "log_id" uuid [pk, not null]
+  "create_time" timestamp [not null, default: `current_timestamp`]
+  "type" "character varying" [not null]
+  "message" text [not null]
+}
+
+Table "mgroup" {
+  "mgroup_id" uuid [pk, not null]
+  "name" character(32)
+}
+
+Table "panel" {
+  "panel_id" uuid [pk, not null]
+  "name" "character varying(32)" [not null]
+  "title" "character varying(32)" [not null]
+  "style" "character varying(32)" [not null]
+  "permissions" "character varying(32)"
+  "large" boolean [not null, default: "f"]
+  "visible" boolean [not null, default: "t"]
+  "sort_order" integer [not null, default: 1000]
+}
+
+Table "session" {
+  "id" character(72) [pk, not null]
+  "session_data" text
+  "expires" integer [not null]
+}
+
+Table "soda_type" {
+  "soda_type_id" uuid [pk, not null]
+  "name" "character varying" [not null]
+}
+
+Table "storage_location" {
+  "location_id" uuid [pk, not null]
+  "parent_id" uuid
+  "name" "character varying(32)" [not null]
+  "sort_order" integer [not null, default: 1000]
+
+        
+Indexes {
+  parent_id [name: "storage_location_idx_parent_id"]
+}
+}
+
+Table "storage_slot_type" {
+  "type_id" uuid [pk, not null]
+  "name" "character varying" [not null]
+  "default_expire_time" "character varying"
+  "can_request" boolean [not null, default: "t"]
+}
+
+Table "survey" {
+  "survey_id" uuid [pk, not null]
+  "name" "character varying"
+  "title" "character varying"
+  "json_data" jsonb
+}
+
+Table "curse_action" {
+  "curse_action_id" uuid [pk, not null]
+  "curse_id" uuid [not null]
+  "path" "character varying" [not null]
+  "action" "character varying" [not null]
+  "message" text [not null]
+
+        
+Indexes {
+  curse_id [name: "curse_action_idx_curse_id"]
+}
+}
+
+Table "image" {
+  "image_id" uuid [pk, not null]
+  "image" bytea [not null]
+  "thumbnail" bytea
+  "created_at" timestamp [not null, default: `current_timestamp`]
+  "updated_at" timestamp [not null, default: `current_timestamp`]
+  "content_type" "character varying"
+}
+
+Table "members" {
+  "member_id" uuid [pk, not null]
+  "fname" "character varying(255)"
+  "lname" "character varying(255)"
+  "email" citext [unique, not null]
+  "paypal_email" citext
+  "phone" bigint
+  "encrypted_password" "character varying(255)" [not null]
+  "vend_credits" integer [not null, default: 0]
+  "vend_total" integer [not null, default: 0]
+  "created_at" timestamp [not null, default: `current_timestamp`]
+  "updated_at" timestamp [not null, default: `current_timestamp`]
+  "handle" citext [unique]
+  "member_image_id" uuid
+  "door_count" integer
+  "totp_secret" bytea
+  "linked_member_id" uuid
+  "alert_credits" integer
+  "alert_email" boolean
+  "alert_machine" boolean
+
+        
+Indexes {
+  member_image_id [name: "members_idx_member_image_id"]
+  linked_member_id [name: "members_idx_linked_member_id"]
+  (fname, lname) [name: "members_fname_lname_idx"]
+  (lname, fname) [name: "members_lname_fname_idx"]
+}
+}
+
+Table "soda_status" {
+  "soda_id" uuid [pk, not null]
+  "name" "character varying(32)" [not null]
+  "sold_out" boolean [not null, default: "f"]
+  "slot_number" integer [not null]
+  "soda_type_id" uuid [not null]
+
+        
+Indexes {
+  soda_type_id [name: "soda_status_idx_soda_type_id"]
+}
+}
+
+Table "survey_question" {
+  "survey_question_id" uuid [pk, not null]
+  "survey_id" uuid [not null]
+  "sort_order" integer [not null, default: 1000]
+  "question_text" "character varying" [not null]
+
+        
+Indexes {
+  survey_id [name: "survey_question_idx_survey_id"]
+}
+}
+
+Table "temp_log" {
+  "temp_log_id" uuid [pk, not null]
+  "create_time" timestamp [not null, default: `current_timestamp`]
+  "item_id" uuid [not null]
+  "temperature" integer [not null]
+
+        
+Indexes {
+  item_id [name: "temp_log_idx_item_id"]
+  (item_id, create_time) [name: "recent_temp"]
+}
+}
+
+Table "action" {
+  "action_id" uuid [pk, not null]
+  "queued_at" timestamp [not null, default: `current_timestamp`]
+  "queuing_member_id" uuid [not null]
+  "priority" integer [not null, default: 1000]
+  "action_type" "character varying" [not null]
+  "row_id" uuid [not null]
+
+        
+Indexes {
+  queuing_member_id [name: "action_idx_queuing_member_id"]
+}
+}
+
+Table "application" {
+  "application_id" uuid [pk, not null]
+  "member_id" uuid [not null]
+  "address1" "character varying" [not null]
+  "address2" "character varying"
+  "city" "character varying" [not null]
+  "state" character(2) [not null]
+  "zip" character(9) [not null]
+  "contact_name" "character varying"
+  "contact_phone" bigint
+  "form_id" uuid
+  "topic_id" "character varying"
+  "picture_id" uuid
+  "created_at" timestamp [not null, default: `current_timestamp`]
+  "updated_at" timestamp [not null, default: `current_timestamp`]
+  "app_turned_in_at" timestamp
+  "thread_message_id" "character varying"
+  "decided_at" timestamp
+  "final_result" "character varying"
+  "helper" "character varying"
+
+        
+Indexes {
+  form_id [name: "application_idx_form_id"]
+  member_id [name: "application_idx_member_id"]
+  picture_id [name: "application_idx_picture_id"]
+}
+}
+
+Table "audit_log" {
+  "audit_id" uuid [pk, not null]
+  "change_time" timestamp [not null, default: `current_timestamp`]
+  "changed_member_id" uuid [not null]
+  "changing_member_id" uuid
+  "change_type" "character varying" [not null]
+  "notes" "character varying"
+
+        
+Indexes {
+  changed_member_id [name: "audit_log_idx_changed_member_id"]
+  changing_member_id [name: "audit_log_idx_changing_member_id"]
+}
+}
+
+Table "badge" {
+  "badge_id" uuid [pk, not null]
+  "badge_number" integer [not null]
+  "member_id" uuid [not null]
+
+        
+Indexes {
+  member_id [name: "badge_idx_member_id"]
+}
+}
+
+Table "device_item" {
+  "device_id" uuid [not null]
+  "item_id" uuid [not null]
+
+        
+Indexes {
+  (device_id, item_id) [pk]
+  device_id [name: "device_item_idx_device_id"]
+  item_id [name: "device_item_idx_item_id"]
+}
+}
+
+Table "ipn_message" {
+  "ipn_message_id" uuid [pk, not null]
+  "member_id" uuid
+  "received_at" timestamp [not null, default: `current_timestamp`]
+  "txn_id" "character varying"
+  "payer_email" "character varying" [not null]
+  "raw" text [not null]
+
+        
+Indexes {
+  member_id [name: "ipn_message_idx_member_id"]
+}
+}
+
+Table "item_mgroup" {
+  "item_id" uuid [not null]
+  "mgroup_id" uuid [not null]
+
+        
+Indexes {
+  (item_id, mgroup_id) [pk]
+  item_id [name: "item_mgroup_idx_item_id"]
+  mgroup_id [name: "item_mgroup_idx_mgroup_id"]
+}
+}
+
+Table "lamp_bulb" {
+  "bulb_id" uuid [pk, not null]
+  "device_id" uuid [not null]
+  "color_id" uuid [not null]
+  "slot" integer [not null]
+
+        
+Indexes {
+  color_id [name: "lamp_bulb_idx_color_id"]
+  device_id [name: "lamp_bulb_idx_device_id"]
+}
+}
+
+Table "purchase" {
+  "purchase_id" uuid [pk, not null]
+  "member_id" uuid [not null]
+  "purchased_at" date [not null, default: `CURRENT_DATE`]
+
+        
+Indexes {
+  member_id [name: "purchase_idx_member_id"]
+}
+}
+
+Table "reset_token" {
+  "token_id" uuid [pk, not null]
+  "created_at" timestamp [not null, default: `current_timestamp`]
+  "member_id" uuid [not null]
+  "valid" boolean [not null, default: true]
+
+        
+Indexes {
+  member_id [name: "reset_token_idx_member_id"]
+}
+}
+
+Table "sign_in_log" {
+  "sign_in_id" uuid [pk, not null]
+  "sign_in_time" timestamp [not null, default: `current_timestamp`]
+  "member_id" uuid [not null]
+  "valid" boolean [not null]
+  "remote_ip" inet [not null]
+  "email" "character varying" [not null]
+
+        
+Indexes {
+  member_id [name: "sign_in_log_idx_member_id"]
+}
+}
+
+Table "survey_choice" {
+  "survey_choice_id" uuid [pk, not null]
+  "survey_question_id" uuid [not null]
+  "sort_order" integer [not null, default: 1000]
+  "choice_name" "character varying" [not null]
+  "choice_text" "character varying"
+
+        
+Indexes {
+  survey_question_id [name: "survey_choice_idx_survey_question_id"]
+}
+}
+
+Table "access_log" {
+  "access_id" uuid [pk, not null]
+  "access_time" timestamp [not null, default: `current_timestamp`]
+  "item_id" uuid [not null]
+  "member_id" uuid
+  "granted" boolean [not null]
+  "badge_id" integer
+
+        
+Indexes {
+  item_id [name: "access_log_idx_item_id"]
+  member_id [name: "access_log_idx_member_id"]
+  (member_id, access_time) [name: "access_log_member_id_access_time_idx"]
+  access_time [name: "recent"]
+}
+}
+
+Table "member_curse" {
+  "member_curse_id" uuid [pk, not null]
+  "member_id" uuid [not null]
+  "curse_id" uuid [not null]
+  "issued_at" timestamp [not null, default: `current_timestamp`]
+  "lifted_at" timestamp
+  "issuing_member_id" uuid [not null]
+  "issuing_notes" text
+  "lifting_member_id" uuid
+  "lifting_notes" text
+
+        
+Indexes {
+  curse_id [name: "member_curse_idx_curse_id"]
+  issuing_member_id [name: "member_curse_idx_issuing_member_id"]
+  lifting_member_id [name: "member_curse_idx_lifting_member_id"]
+  member_id [name: "member_curse_idx_member_id"]
+}
+}
+
+Table "member_mgroup" {
+  "member_id" uuid [not null]
+  "mgroup_id" uuid [not null]
+
+        
+Indexes {
+  (member_id, mgroup_id) [pk]
+  member_id [name: "member_mgroup_idx_member_id"]
+  mgroup_id [name: "member_mgroup_idx_mgroup_id"]
+}
+}
+
+Table "member_panel" {
+  "member_id" uuid [not null]
+  "panel_id" uuid [not null]
+  "style" "character varying"
+  "visible" boolean
+  "sort_order" integer
+
+        
+Indexes {
+  (member_id, panel_id) [pk]
+  member_id [name: "member_panel_idx_member_id"]
+  panel_id [name: "member_panel_idx_panel_id"]
+}
+}
+
+Table "payment" {
+  "payment_id" uuid [pk, not null]
+  "member_id" uuid [not null]
+  "ipn_message_id" uuid [not null]
+  "payment_date" timestamp [not null, default: `current_timestamp`]
+
+        
+Indexes {
+  ipn_message_id [name: "payment_idx_ipn_message_id"]
+  member_id [name: "payment_idx_member_id"]
+}
+}
+
+Table "survey_response" {
+  "survey_response_id" uuid [pk, not null]
+  "survey_id" uuid [not null]
+  "member_id" uuid [not null]
+  "created_at" timestamp [not null, default: `current_timestamp`]
+
+        
+Indexes {
+  member_id [name: "survey_response_idx_member_id"]
+  survey_id [name: "survey_response_idx_survey_id"]
+}
+}
+
+Table "vend_log" {
+  "vend_id" uuid [pk, not null]
+  "vend_time" timestamp [not null, default: `current_timestamp`]
+  "device_id" uuid [not null]
+  "member_id" uuid
+  "vended" boolean [not null]
+  "badge_id" integer
+
+        
+Indexes {
+  device_id [name: "vend_log_idx_device_id"]
+  member_id [name: "vend_log_idx_member_id"]
+}
+}
+
+Table "lamp_bulb_preset" {
+  "preset_id" uuid [not null]
+  "bulb_id" uuid [not null]
+  "value" boolean [not null]
+
+        
+Indexes {
+  (preset_id, bulb_id) [pk]
+  bulb_id [name: "lamp_bulb_preset_idx_bulb_id"]
+  preset_id [name: "lamp_bulb_preset_idx_preset_id"]
+}
+}
+
+Table "storage_slot" {
+  "slot_id" uuid [pk, not null]
+  "name" "character varying(32)" [not null]
+  "member_id" uuid
+  "expire_date" timestamp
+  "location_id" uuid [not null]
+  "type_id" uuid [not null]
+  "sort_order" integer [not null, default: 1000]
+
+        
+Indexes {
+  location_id [name: "storage_slot_idx_location_id"]
+  member_id [name: "storage_slot_idx_member_id"]
+  type_id [name: "storage_slot_idx_type_id"]
+}
+}
+
+Table "purchase_soda" {
+  "purchase_id" uuid [not null]
+  "soda_id" uuid [not null]
+  "soda_quantity" integer [not null]
+
+        
+Indexes {
+  (purchase_id, soda_id) [pk]
+  purchase_id [name: "purchase_soda_idx_purchase_id"]
+  soda_id [name: "purchase_soda_idx_soda_id"]
+}
+}
+
+Table "storage_request" {
+  "request_id" uuid [pk, not null]
+  "member_id" uuid [not null]
+  "created_at" timestamp [not null, default: `current_timestamp`]
+  "notes" text
+  "status" "character varying" [not null, default: "requested"]
+  "slot_id" uuid
+  "deciding_member_id" uuid
+  "decision_notes" text
+  "decided_at" timestamp
+  "hidden" boolean [not null, default: "f"]
+  "type_id" uuid
+
+        
+Indexes {
+  deciding_member_id [name: "storage_request_idx_deciding_member_id"]
+  member_id [name: "storage_request_idx_member_id"]
+  slot_id [name: "storage_request_idx_slot_id"]
+  type_id [name: "storage_request_idx_type_id"]
+}
+}
+
+Table "survey_answer" {
+  "survey_answer_id" uuid [pk, not null]
+  "survey_response_id" uuid [not null]
+  "survey_question_id" uuid [not null]
+  "answer_text" "character varying" [not null]
+
+        
+Indexes {
+  survey_question_id [name: "survey_answer_idx_survey_question_id"]
+  survey_response_id [name: "survey_answer_idx_survey_response_id"]
+}
+}
+
+Ref:"storage_location"."location_id" < "storage_location"."parent_id"
+
+Ref:"curse"."curse_id" < "curse_action"."curse_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_image_id" < "image"."image_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "members"."linked_member_id"
+
+Ref:"soda_type"."soda_type_id" < "soda_status"."soda_type_id"
+
+Ref:"survey"."survey_id" < "survey_question"."survey_id" [update: restrict, delete: restrict]
+
+Ref:"item"."item_id" < "temp_log"."item_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "action"."queuing_member_id" [update: restrict, delete: restrict]
+
+Ref:"image"."image_id" < "application"."form_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "application"."member_id" [update: restrict, delete: restrict]
+
+Ref:"image"."image_id" < "application"."picture_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "audit_log"."changed_member_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "audit_log"."changing_member_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "badge"."member_id" [update: restrict, delete: restrict]
+
+Ref:"device"."device_id" < "device_item"."device_id" [update: restrict, delete: restrict]
+
+Ref:"item"."item_id" < "device_item"."item_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "ipn_message"."member_id" [update: restrict, delete: restrict]
+
+Ref:"item"."item_id" < "item_mgroup"."item_id" [update: restrict, delete: restrict]
+
+Ref:"mgroup"."mgroup_id" < "item_mgroup"."mgroup_id" [update: restrict, delete: restrict]
+
+Ref:"lamp_color"."color_id" < "lamp_bulb"."color_id"
+
+Ref:"device"."device_id" < "lamp_bulb"."device_id"
+
+Ref:"members"."member_id" < "purchase"."member_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "reset_token"."member_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "sign_in_log"."member_id" [update: restrict, delete: restrict]
+
+Ref:"survey_question"."survey_question_id" < "survey_choice"."survey_question_id" [update: restrict, delete: restrict]
+
+Ref:"item"."item_id" < "access_log"."item_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "access_log"."member_id" [update: restrict, delete: restrict]
+
+Ref:"curse"."curse_id" < "member_curse"."curse_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "member_curse"."issuing_member_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "member_curse"."lifting_member_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "member_curse"."member_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "member_mgroup"."member_id" [update: restrict, delete: restrict]
+
+Ref:"mgroup"."mgroup_id" < "member_mgroup"."mgroup_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "member_panel"."member_id" [update: restrict, delete: restrict]
+
+Ref:"panel"."panel_id" < "member_panel"."panel_id" [update: restrict, delete: restrict]
+
+Ref:"ipn_message"."ipn_message_id" < "payment"."ipn_message_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "payment"."member_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "survey_response"."member_id"
+
+Ref:"survey"."survey_id" < "survey_response"."survey_id" [update: cascade, delete: cascade]
+
+Ref:"device"."device_id" < "vend_log"."device_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "vend_log"."member_id" [update: restrict, delete: restrict]
+
+Ref:"lamp_bulb"."bulb_id" < "lamp_bulb_preset"."bulb_id"
+
+Ref:"lamp_preset"."preset_id" < "lamp_bulb_preset"."preset_id"
+
+Ref:"storage_location"."location_id" < "storage_slot"."location_id"
+
+Ref:"members"."member_id" < "storage_slot"."member_id"
+
+Ref:"storage_slot_type"."type_id" < "storage_slot"."type_id"
+
+Ref:"purchase"."purchase_id" < "purchase_soda"."purchase_id" [update: restrict, delete: restrict]
+
+Ref:"soda_status"."soda_id" < "purchase_soda"."soda_id" [update: restrict, delete: restrict]
+
+Ref:"members"."member_id" < "storage_request"."deciding_member_id"
+
+Ref:"members"."member_id" < "storage_request"."member_id"
+
+Ref:"storage_slot"."slot_id" < "storage_request"."slot_id"
+
+Ref:"storage_slot_type"."type_id" < "storage_request"."type_id"
+
+Ref:"survey_question"."survey_question_id" < "survey_answer"."survey_question_id" [update: restrict, delete: restrict]
+
+Ref:"survey_response"."survey_response_id" < "survey_answer"."survey_response_id" [update: restrict, delete: restrict]
+
+
+Ref: "device"."device_id" < "device"."nonce"
+
+Ref: "device"."device_id" < "device"."key"
