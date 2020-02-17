@@ -1,5 +1,8 @@
 # Hive13 API
 
+## Notes
+* All endpoints are prefixed with `/api`
+
 ### Dependencies
 - markdown:             v3.1.1
 - Flask:                v1.1.1
@@ -13,10 +16,8 @@
     - this launches on `http://localhost:8000`
 
 ### Future Considerations
-1. Remove `flask-rest` dependency
-  * It's cumbersome, and adds bloat, can get the same thing with just bare flask
-
+If you have any ides, put them here 😃
 
 ### Current Endpoints
 * `/` shows this README as HTML page
-* `/test` responds with a json response (works in browser or with postman)
+* `/api/test` responds with a json response (works in browser or with postman)

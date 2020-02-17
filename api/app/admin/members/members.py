@@ -28,12 +28,18 @@ engine = sqlalchemy.create_engine(url, echo=True)
 db.metadata.bind = engine
 conn = engine.connect()
 
-@app.route('/api/members', methods=["GET"])
+# TODO: how to return json object with sqlalchemy/flask
+#* see: https://codeandlife.com/2014/12/07/sqlalchemy-results-to-json-the-easy-way/
+# member profile
+@app.route('/api/admin/members/profile', methods=["GET"])
 def members():
+    req_data = request.get_json()
+
+    member_id = req_data['member_id']
     # build query, execute on get request
-    s = sqlalchemy.sql.\
-        select([db.members]).\
-        order_by(db.members.c.created_at.asc())
-    result = conn.execute(s)
+    s = sqlalchemy.text("""SELECT *
+                            FROM members
+                            WHERE member_id = x:""")
+    result = conn.execute(s, x=member_id)
     rows = [{"member": row['member_id'], "member name": row['lname']} for row in result]
     return jsonify(rows)
