@@ -2,6 +2,4 @@
 #*#
 .vscode
 creds.py
-/api/__pycache__/
-/api/hive13_api/__pycache__/
-/api/app/__pycache__/
+__pycache__/
