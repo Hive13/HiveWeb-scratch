@@ -22,6 +22,6 @@ def members():
         result = db_conn.execute(s, x=str(member_id))
         rows = [dict(row) for row in result]
         return jsonify(rows)
-    except:
-        error_message = [{"result": 0, "message": "Invalid Member ID"}]
+    except Exception as ex:
+        error_message = [{"result": 0, "message": str(ex)}]
         return jsonify(error_message)
