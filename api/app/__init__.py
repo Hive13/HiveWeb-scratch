@@ -15,6 +15,7 @@ from app import creds
 # Initialize database
 import sqlalchemy
 import db
+import urllib
 
 db_url = "postgresql+{}://{}:{}@{}/{}".format(
     config.db_driver,
