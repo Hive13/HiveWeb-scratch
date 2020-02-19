@@ -6,7 +6,7 @@ from flask import jsonify, request
 from app import db_conn
 
 # member profile
-@app.route('/api/admin/members/profile/', methods=['GET', 'POST'])
+@app.route('/api/admin/members/profile', methods=['GET', 'POST'])
 def members():
     req_data = request.get_json()
 
