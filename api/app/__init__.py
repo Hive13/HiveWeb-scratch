@@ -6,6 +6,9 @@ import requests
 
 app = Flask(__name__)
 
+# Import credentials module
+from app import creds
+
 # import endpoint packages
 from app import test
 from app import tool

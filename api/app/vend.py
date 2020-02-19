@@ -4,7 +4,7 @@ import sqlalchemy
 import urllib
 import db
 
-from creds import db_password
+from app.creds import db_password
 
 user = "access"
 host = "honeycomb.at.hive13.org"
