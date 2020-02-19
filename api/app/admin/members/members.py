@@ -4,7 +4,7 @@ import urllib.parse
 from flask import jsonify, request
 import db
 
-from creds import db_password, DEVICE, DEVICE_KEY
+from app.creds import db_password, DEVICE, DEVICE_KEY
 
 #? is there a way for use to move this out of this file?
 # I think a lot of files will be using this data along with the `url` var and db connection. 
