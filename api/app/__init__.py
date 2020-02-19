@@ -35,4 +35,4 @@ from app import test
 from app import tool
 from app import index
 from app.admin.members import members
-from app import vend
+#from app import vend
