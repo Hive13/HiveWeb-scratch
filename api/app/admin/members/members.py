@@ -12,8 +12,8 @@ def members():
 
     member_id = req_data['member_id']
     # build query, execute on get request
-    s = sqlalchemy.text("""SELECT *
-                            FROM members
+    s = sqlalchemy.text("""SELECT lname, fname, phone, created_at
+                            FROM public.members
                             WHERE member_id = :x
                         """)
     
