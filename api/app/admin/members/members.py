@@ -1,9 +1,8 @@
 from app import app
 import sqlalchemy
-import urllib.parse
 from flask import jsonify, request
 
-from app import db_conn
+from db import db_conn
 
 # member profile
 @app.route('/api/admin/members/profile', methods=['GET', 'POST'])
